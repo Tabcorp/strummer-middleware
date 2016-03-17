@@ -8,10 +8,12 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "eslint": "^2.5.3",
+    "lodash": "^4.6.1"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5",
-    "strummer": "^2.4.0"
+    "mocha": "^2.4.5"
   }
 }

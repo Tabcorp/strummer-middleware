@@ -8,3 +8,6 @@ install:
 test: install
 	NODE_ENV=test ${BIN}/mocha test
 	@echo "Unit tests passed!";
+
+lint:
+	${BIN}/eslint .
