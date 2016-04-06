@@ -1,6 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
+var _                   = require('lodash'),
+    InvalidSyntaxError  = require('./lib/invalid-syntax-error');
+
 var AREAS = ['params', 'query', 'body'];
 
 module.exports = function(validation) {
@@ -19,7 +21,7 @@ module.exports = function(validation) {
     return function(req, res, next) {
         var result = validate(req[checks[0]], validation[checks[0]]);
         if (result.length > 0) {
-            return next(new Error('Validation failed.'));
+            return next(new InvalidSyntaxError(result));
         }
 
         next();

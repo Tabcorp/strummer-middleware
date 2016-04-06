@@ -16,7 +16,7 @@ describe('bad input', function() {
 describe('a failure condition', function() {
     var failingValidation = {
         match: function(one) {
-            return ['Failing validation', one.toString()];
+            return ['Field is incorrect', one.toString()];
         }
     };
 
