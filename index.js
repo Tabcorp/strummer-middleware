@@ -5,6 +5,12 @@ var _                   = require('lodash'),
 
 var AREAS = ['params', 'query', 'body'];
 
+var errorMessages = {
+    params: 'Invalid request parameters',
+    query: 'Invalid query string',
+    body: 'Invalid request payload'
+};
+
 module.exports = function(validation) {
     var properties = Object.keys(validation);
 
@@ -21,7 +27,7 @@ module.exports = function(validation) {
     return function(req, res, next) {
         var result = validate(req[checks[0]], validation[checks[0]]);
         if (result.length > 0) {
-            return next(new InvalidSyntaxError(result));
+            return next(new InvalidSyntaxError(errorMessages[checks[0]], result));
         }
 
         next();
