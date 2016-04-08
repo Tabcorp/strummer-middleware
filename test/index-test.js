@@ -14,7 +14,9 @@ describe('bad input', function() {
 });
 
 var failingValidation = {
+    /*eslint-disable */
     match: function(one) {
+    /*eslint-enable */
         //this is a strummer like return value
         return [{ path: 'failingVal', value: true, message: 'should not be true' }];
     }
@@ -25,9 +27,9 @@ describe('a failure condition', function() {
         var middleware = validator({ body: failingValidation });
 
         var req = {
-            body: { 
+            body: {
                 failingVal: true
-            } 
+            }
         };
 
         var next = function(err) {
@@ -38,7 +40,7 @@ describe('a failure condition', function() {
             expect(err.status).to.equal('InvalidSyntax');
             done();
         };
-        
+
         middleware(req, {}, next);
     });
 });
