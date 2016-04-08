@@ -4,18 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test",
-    "lint": "./node_modules/eslint/bin/eslint.js ."
+    "test": "mocha",
+    "lint": "require-lint && eslint ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "eslint": "^2.5.3",
     "http-custom-errors": "^8.0.0",
     "lodash": "^4.6.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "eslint": "^2.5.3",
+    "mocha": "^2.4.5",
+    "require-lint": "^1.1.1"
   }
 }
