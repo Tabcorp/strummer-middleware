@@ -57,7 +57,7 @@ describe('middleware validation', function() {
             expect(err).to.be.ok;
             expect(err.message).to.equal('Invalid request payload');
             expect(err.details).to.eql([{
-                path: null,
+                path: 'body',
                 value: 'foo',
                 message: 'should not be foo'
             }]);
@@ -70,7 +70,7 @@ describe('middleware validation', function() {
         };
         var validate = middleware({ body: fixtures.success() });
         validate(req, {}, function(err) {
-            expect(err).to.equal(null);
+            expect(err).to.be.falsy;
         });
     });
 
@@ -86,12 +86,12 @@ describe('middleware validation', function() {
             headers: spy
         });
         validate(req, {}, function(err) {
-            expect(err).to.equal(null);
+            expect(err).to.be.falsy;
             expect(spy.count()).to.equal(4);
         });
     });
 
-    it('stops at the first failing check', function() {
+    it('collects all errors and reports them in one error', function() {
         var req = {
             params: 'p',
             query: 'q',
@@ -106,13 +106,41 @@ describe('middleware validation', function() {
         });
         validate(req, {}, function(err) {
             expect(err).to.be.ok;
-            expect(err.message).to.equal('Invalid request parameters');
-            expect(err.details).to.eql([{
-                path: null,
-                value: 'p',
-                message: 'should not be p'
-            }]);
+            expect(err.message).to.equal('There were combined errors in params, query, body, headers.');
+
+            Object.keys(req).forEach(function(area, i){
+                expect(err.details[i].path).to.equal(area);
+                expect(err.details[i].value).to.equal(req[area]);
+                expect(err.details[i].message).to.equal('should not be ' + req[area]);
+            });
         });
     });
 
+    it('elegantly copes with interspersed failures', function() {
+        var req = {
+            params: 'p',
+            query: 'q',
+            body: 'b',
+            headers: 'h'
+        };
+        var validate = middleware({
+            params: fixtures.failure(),
+            query: fixtures.success(),
+            body: fixtures.success(),
+            headers: fixtures.failure()
+        });
+        validate(req, {}, function(err) {
+            expect(err).to.be.ok;
+            expect(err.message).to.equal('There were combined errors in params, headers.');
+
+            expect(err.details[0].path).to.equal('params');
+            expect(err.details[0].value).to.equal('p');
+            expect(err.details[0].message).to.equal('should not be p');
+
+            expect(err.details[1].path).to.equal('headers');
+            expect(err.details[1].value).to.equal('h');
+            expect(err.details[1].message).to.equal('should not be h');
+        });
+    });
 });
+

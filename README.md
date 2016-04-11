@@ -26,7 +26,7 @@ var validate = sware({
 server.post('/users', validate, controller);
 ```
 
-`strummer-middleware` can validate 3 areas of the request:
+`strummer-middleware` can validate 4 areas of the request:
 
 ```js
 sware({
