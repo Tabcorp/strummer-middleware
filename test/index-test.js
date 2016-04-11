@@ -1,120 +1,118 @@
 'use strict';
 
-var expect          = require('chai').expect,
-    validator       = require('./../index');
+var expect = require('chai').expect;
+var middleware = require('../index');
+var fixtures = require('./fixtures.js');
 
-describe('bad input', function() {
-    it('errors immediately if a mapping is passed in that wont work', function() {
-        expect(validator.bind(validator, {})).to.throw('Specify a validation mapping to an area of the HTTP Request - i.e. query, params or body: e.g. { query: matcher }');
+var AREAS = ['params', 'query', 'body', 'headers'];
+
+describe('creating the middleware', function() {
+
+    it('throws if no matchers are provided', function() {
+        expect(function() {
+            middleware({});
+        }).to.throw(/at least one/);
     });
 
-    it('errors if the matcher doesnt exist or have an arity of two (to be compatible with Strummer matches)', function(){
-        expect(validator.bind(validator, { query: { id: 'number' } })).to.throw('The match function must have an arity of at least one - match(validation)');
+    it('works if validating a single area', function() {
+        AREAS.forEach(function(area) {
+            var checks = {};
+            checks[area] = fixtures.success();
+            expect(function() {
+                middleware(checks);
+            }).not.to.throw(/at least one/);
+        });
     });
+
+    it('works if validating all areas', function() {
+        var checks = {};
+        AREAS.forEach(function(area) {
+            checks[area] = fixtures.success();
+        });
+        expect(function() {
+            middleware(checks);
+        }).not.to.throw(/at least one/);
+    });
+
+    it('throws if the checks are not valid matchers', function() {
+        AREAS.forEach(function(area) {
+            var checks = {};
+            checks[area] = fixtures.invalid();
+            expect(function() {
+                middleware(checks);
+            }).to.throw(/should be a valid matcher/);
+        });
+    });
+
 });
 
-var failingValidation = {
-    /*eslint-disable */
-    match: function(one) {
-    /*eslint-enable */
-        //this is a strummer like return value
-        return [{ path: 'failingVal', value: true, message: 'should not be true' }];
-    }
-};
+describe('middleware validation', function() {
 
-describe('a failure condition', function() {
-    it('triggers the next middleware with the error', function(done) {
-        var middleware = validator({ body: failingValidation });
-
+    it('validates a failing body', function() {
         var req = {
-            body: {
-                failingVal: true
-            }
+            body: 'foo'
         };
-
-        var next = function(err) {
-            expect(err).to.be.ok;
-            expect(err.fields.details[0].path).to.equal('failingVal');
-            expect(err.fields.details[0].value).to.equal(true);
-            expect(err.fields.details[0].message).to.equal('should not be true');
-            expect(err.status).to.equal('InvalidSyntax');
-            done();
-        };
-
-        middleware(req, {}, next);
-    });
-});
-
-describe('a successful validation', function() {
-    var successfulValidation = {
-
-        /*eslint-disable */
-        match: function(one) {
-            return [];
-        }
-        /*eslint-enable */
-    };
-
-    it('triggers the next middleware with the error', function(done) {
-        var middleware = validator({body: successfulValidation});
-
-        var req = {
-            body: {
-                successfulVal: true
-            }
-        };
-
-        var next = function(err) {
-            expect(err).to.not.be.ok;
-            done();
-        };
-
-        middleware(req, {}, next);
-    });
-});
-
-describe('identical error messages to the old version', () => {
-    var req = {};
-
-    it('params', (done) => {
-        var middleware = validator({ params: failingValidation });
-
-        req.body = { body: {} };
-
-        var next = function(err) {
-            expect(err).to.be.ok;
-            expect(err.message).to.equal('Invalid request parameters');
-            done();
-        };
-
-        middleware(req, {}, next);
-    });
-
-    it('query', (done) => {
-        var middleware = validator({ query: failingValidation });
-
-        req.body = { body: {} };
-
-        var next = function(err) {
-            expect(err).to.be.ok;
-            expect(err.message).to.equal('Invalid query string');
-            done();
-        };
-
-        middleware(req, {}, next);
-    });
-
-    it('body', (done) => {
-        var middleware = validator({ body: failingValidation });
-
-        req.body = { body: {} };
-
-        var next = function(err) {
+        var validate = middleware({ body: fixtures.failure() });
+        validate(req, {}, function(err) {
             expect(err).to.be.ok;
             expect(err.message).to.equal('Invalid request payload');
-            done();
-        };
-
-        middleware(req, {}, next);
+            expect(err.details).to.eql([{
+                path: null,
+                value: 'foo',
+                message: 'should not be foo'
+            }]);
+        });
     });
+
+    it('validates a matching body', function() {
+        var req = {
+            body: 'foo'
+        };
+        var validate = middleware({ body: fixtures.success() });
+        validate(req, {}, function(err) {
+            expect(err).to.equal(null);
+        });
+    });
+
+    it('calls all checks if they pass (params, query, body, headers)', function() {
+        var req = {
+            body: {}
+        };
+        var spy = fixtures.spy();
+        var validate = middleware({
+            params: spy,
+            query: spy,
+            body: spy,
+            headers: spy
+        });
+        validate(req, {}, function(err) {
+            expect(err).to.equal(null);
+            expect(spy.count()).to.equal(4);
+        });
+    });
+
+    it('stops at the first failing check', function() {
+        var req = {
+            params: 'p',
+            query: 'q',
+            body: 'b',
+            headers: 'h'
+        };
+        var validate = middleware({
+            params: fixtures.failure(),
+            query: fixtures.failure(),
+            body: fixtures.failure(),
+            headers: fixtures.failure()
+        });
+        validate(req, {}, function(err) {
+            expect(err).to.be.ok;
+            expect(err.message).to.equal('Invalid request parameters');
+            expect(err.details).to.eql([{
+                path: null,
+                value: 'p',
+                message: 'should not be p'
+            }]);
+        });
+    });
+
 });

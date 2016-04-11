@@ -30,13 +30,14 @@ server.post('/users', validate, controller);
 
 ```js
 sware({
-  body:     /* match req.body     */
+  params:   /* match req.params    */
   query:    /* match req.query    */
+  body:     /* match req.body     */
   headers:  /* match req.headers  */
 })
 ```
 
-These fields were chosen because they are a well established standard. `strummer-middleware` is not responsible for creating `req.body` or `req.query`, you must follow the documentation of your web framework.
+These fields were chosen because they are a well established standard. `strummer-middleware` is not responsible for creating `req.params`, `req.query` or `req.body`, you must follow the documentation of your web framework.
 
 ## Error handling
 
@@ -45,10 +46,7 @@ In [Express](http://expressjs.com/) this means you will also need to set up an e
 
 ```js
 function errorHandler(err, req, res, next) {
-  // is this a strummer validation error?
-  if (err.status === 'InvalidSyntax') {
-    res.statusCode(400).send('Bad request')
-  }
+  res.statusCode(400).send('Bad request')
 }
 
 // global handler
@@ -62,7 +60,7 @@ The `err` object also contains more information:
 
 ```js
 console.log(err.message)
-console.log(err.fields)
+console.log(err.details)
 ```
 
 ## Strummer integration

@@ -1,39 +1,58 @@
 'use strict';
 
-var _                   = require('lodash'),
-    InvalidSyntaxError  = require('./lib/invalid-syntax-error');
-
-var AREAS = ['params', 'query', 'body'];
-
-var errorMessages = {
+var AREAS = {
     params: 'Invalid request parameters',
     query: 'Invalid query string',
-    body: 'Invalid request payload'
+    body: 'Invalid request payload',
+    headers: 'Invalid request headers'
 };
 
-module.exports = function(validation) {
-    var properties = Object.keys(validation);
+module.exports = function(checks) {
 
-    //ensure a validation exists for the possible HTTP input locations, otherwise error immediately
-    var checks = (_.intersection(AREAS, properties));
-    if (checks.length == 0) {
-        throw new Error('Specify a validation mapping to an area of the HTTP Request - i.e. query, params or body: e.g. { query: matcher }');
-    }
+    // first validate the middleware options
+    validateOptions(checks);
 
-    if (!validation[checks[0]].match || validation[checks[0]].match.length < 1) {
-        throw new Error('The match function must have an arity of at least one - match(validation)');
-    }
-
+    // return actual middleware
+    // unwind loop for better performance
     return function(req, res, next) {
-        var result = validate(req[checks[0]], validation[checks[0]]);
-        if (result.length > 0) {
-            return next(new InvalidSyntaxError(errorMessages[checks[0]], result));
-        }
-
-        next();
+        var err = errorsFrom(checks, req, 'params')
+               || errorsFrom(checks, req, 'query')
+               || errorsFrom(checks, req, 'body')
+               || errorsFrom(checks, req, 'headers')
+               || null;
+        next(err);
     };
+
 };
 
-function validate(requestData, matcher) {
-    return matcher.match(requestData);
+function validateOptions(checks) {
+    var validChecks = 0;
+    Object.keys(AREAS).forEach(function(area) {
+        var matcher = checks[area];
+        if (matcher) {
+            if (isMatcher(matcher)) ++validChecks;
+            else throw new Error(area + ' should be a valid matcher');
+        }
+    });
+    if (validChecks === 0) {
+        var keys = Object.keys(AREAS).join(',');
+        throw new Error('Specify at least one validation from: ' + keys);
+    }
+}
+
+function isMatcher(check) {
+    var fn = check.match;
+    return fn && (typeof fn === 'function') && (fn.length === 1 || fn.length === 2);
+}
+
+function errorsFrom(checks, req, area) {
+    if (checks[area]) {
+        var result = checks[area].match(null, req[area]);
+        if (result.length > 0) {
+            var err = new Error(AREAS[area]);
+            err.details = result;
+            return err;
+        }
+    }
+    return null;
 }
