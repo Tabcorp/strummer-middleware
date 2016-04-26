@@ -38,6 +38,10 @@ module.exports = function(checks) {
     };
 };
 
+module.exports.setArea = function(name, errorString) {
+  AREAS[name] = errorString;
+}
+
 function validateOptions(checks) {
     var validChecks = 0;
     Object.keys(AREAS).forEach(function(area) {

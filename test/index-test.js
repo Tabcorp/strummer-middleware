@@ -142,5 +142,25 @@ describe('middleware validation', function() {
             expect(err.details[1].message).to.equal('should not be h');
         });
     });
-});
 
+    it('can handle custom areas', function() {
+        middleware.setArea('jwt', 'Invalid JWT');
+        var req = {
+            jwt: 'foo'
+        };
+        var validate = middleware({ jwt: fixtures.failure() });
+        validate(req, {}, function(err) {
+            expect(err).to.be.ok;
+            expect(err.message).to.equal('Invalid JWT');
+            expect(err.details).to.eql([{
+                path: 'jwt',
+                value: 'foo',
+                message: 'should not be foo'
+            }]);
+        });
+        var validateSuccess = middleware({ jwt: fixtures.success() });
+        validate(req, {}, function(err) {
+            expect(err).to.be.falsy;
+        });
+    });
+});
