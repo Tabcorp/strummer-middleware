@@ -39,8 +39,8 @@ module.exports = function(checks) {
 };
 
 module.exports.setValidationArea = function(name, errorString) {
-  VALIDATION_AREAS[name] = errorString;
-}
+    VALIDATION_AREAS[name] = errorString;
+};
 
 function validateOptions(checks) {
     var validChecks = 0;

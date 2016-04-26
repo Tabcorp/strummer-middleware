@@ -142,15 +142,15 @@ describe('middleware validation', function() {
             expect(err.details[1].message).to.equal('should not be h');
         });
     });
-  });
+});
 
-  describe('setting validation areas', function() {
+describe('setting validation areas', function() {
     beforeEach(function() {
-      middleware.setValidationArea('jwt', 'Invalid JWT');
+        middleware.setValidationArea('jwt', 'Invalid JWT');
     });
 
     afterEach(function() {
-      middleware.setValidationArea('jwt', undefined);
+        middleware.setValidationArea('jwt', undefined);
     });
 
     it('can handle custom areas failing', function() {
@@ -171,12 +171,12 @@ describe('middleware validation', function() {
     });
 
     it('can handle custom areas succeeding', function() {
-      var req = {
-          jwt: 'foo'
-      };
-      var validate = middleware({ jwt: fixtures.success() });
-      validate(req, {}, function(err) {
-          expect(err).to.be.falsy;
-      });
+        var req = {
+            jwt: 'foo'
+        };
+        var validate = middleware({ jwt: fixtures.success() });
+        validate(req, {}, function(err) {
+            expect(err).to.be.falsy;
+        });
     });
 });
