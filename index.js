@@ -1,6 +1,6 @@
 'use strict';
 
-var AREAS = {
+var VALIDATION_AREAS = {
     params: 'Invalid request parameters',
     query: 'Invalid query string',
     body: 'Invalid request payload',
@@ -18,7 +18,7 @@ module.exports = function(checks) {
         var collectedDetails = [];
         var collectedAreas = [];
 
-        Object.keys(AREAS).forEach(function(area) {
+        Object.keys(VALIDATION_AREAS).forEach(function(area) {
             var err = errorsFrom(checks, req, area);
             if (err) {
                 errors.push(err);
@@ -38,9 +38,13 @@ module.exports = function(checks) {
     };
 };
 
+module.exports.setValidationArea = function(name, errorString) {
+  VALIDATION_AREAS[name] = errorString;
+}
+
 function validateOptions(checks) {
     var validChecks = 0;
-    Object.keys(AREAS).forEach(function(area) {
+    Object.keys(VALIDATION_AREAS).forEach(function(area) {
         var matcher = checks[area];
         if (matcher) {
             if (isMatcher(matcher)) ++validChecks;
@@ -48,7 +52,7 @@ function validateOptions(checks) {
         }
     });
     if (validChecks === 0) {
-        var keys = Object.keys(AREAS).join(',');
+        var keys = Object.keys(VALIDATION_AREAS).join(',');
         throw new Error('Specify at least one validation from: ' + keys);
     }
 }
@@ -62,7 +66,7 @@ function errorsFrom(checks, req, area) {
     if (checks[area]) {
         var result = checks[area].match(area, req[area]);
         if (result.length > 0) {
-            var err = new Error(AREAS[area]);
+            var err = new Error(VALIDATION_AREAS[area]);
             err.details = result;
             return err;
         }

@@ -39,6 +39,17 @@ sware({
 
 These fields were chosen because they are a well established standard. `strummer-middleware` is not responsible for creating `req.params`, `req.query` or `req.body`, you must follow the documentation of your web framework.
 
+Custom fields can be added using the method `setValidationArea(name, errorString)`. For example:
+
+```js
+sware.setValidationArea('jwt', 'Invalid JWT');
+sware({
+  jwt: {
+    'iss': 'string'
+  }
+})
+```
+
 ## Error handling
 
 `strummer-middleware` will call `next(err)` in case of validation errors.

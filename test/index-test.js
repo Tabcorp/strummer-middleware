@@ -142,5 +142,41 @@ describe('middleware validation', function() {
             expect(err.details[1].message).to.equal('should not be h');
         });
     });
-});
+  });
 
+  describe('setting validation areas', function() {
+    beforeEach(function() {
+      middleware.setValidationArea('jwt', 'Invalid JWT');
+    });
+
+    afterEach(function() {
+      middleware.setValidationArea('jwt', undefined);
+    });
+
+    it('can handle custom areas failing', function() {
+        middleware.setValidationArea('jwt', 'Invalid JWT');
+        var req = {
+            jwt: 'foo'
+        };
+        var validate = middleware({ jwt: fixtures.failure() });
+        validate(req, {}, function(err) {
+            expect(err).to.be.ok;
+            expect(err.message).to.equal('Invalid JWT');
+            expect(err.details).to.eql([{
+                path: 'jwt',
+                value: 'foo',
+                message: 'should not be foo'
+            }]);
+        });
+    });
+
+    it('can handle custom areas succeeding', function() {
+      var req = {
+          jwt: 'foo'
+      };
+      var validate = middleware({ jwt: fixtures.success() });
+      validate(req, {}, function(err) {
+          expect(err).to.be.falsy;
+      });
+    });
+});
