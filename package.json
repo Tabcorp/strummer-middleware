@@ -9,6 +9,10 @@
   },
   "author": "Tabcorp Digital Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TabDigital/node-strummer-middleware.git"
+    },
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^2.5.3",
