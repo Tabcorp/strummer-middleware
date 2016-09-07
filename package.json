@@ -15,8 +15,8 @@
     },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^2.5.3",
-    "mocha": "^2.4.5",
+    "eslint": "^3.4.0",
+    "mocha": "^3.0.2",
     "require-lint": "^1.1.1"
   }
 }
