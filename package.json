@@ -1,6 +1,6 @@
 {
   "name": "strummer-middleware",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "HTTP middleware to validate requests with strummer",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TabDigital/node-strummer-middleware.git"
-    },
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.4.0",
