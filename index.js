@@ -59,7 +59,7 @@ function validateOptions(checks) {
 
 function isMatcher(check) {
     var fn = check.match;
-    return fn && (typeof fn === 'function') && (fn.length === 1 || fn.length === 2);
+    return fn && (typeof fn === 'function') && (fn.length >= 1);
 }
 
 function errorsFrom(checks, req, area) {
