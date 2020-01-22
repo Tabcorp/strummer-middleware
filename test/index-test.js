@@ -70,7 +70,7 @@ describe('middleware validation', function() {
         };
         var validate = middleware({ body: fixtures.success() });
         validate(req, {}, function(err) {
-            expect(err).to.be.falsy;
+            expect(err).to.be.undefined;
         });
     });
 
@@ -86,7 +86,7 @@ describe('middleware validation', function() {
             headers: spy
         });
         validate(req, {}, function(err) {
-            expect(err).to.be.falsy;
+            expect(err).to.be.undefined;
             expect(spy.count()).to.equal(4);
         });
     });
@@ -176,7 +176,7 @@ describe('setting validation areas', function() {
         };
         var validate = middleware({ jwt: fixtures.success() });
         validate(req, {}, function(err) {
-            expect(err).to.be.falsy;
+            expect(err).to.be.undefined;
         });
     });
 });

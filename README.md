@@ -3,7 +3,7 @@
 [![NPM](http://img.shields.io/npm/v/strummer-middleware.svg?style=flat-square)](https://npmjs.org/package/strummer-middleware)
 [![License](http://img.shields.io/npm/l/strummer-middleware.svg?style=flat-square)](https://github.com/TabDigital/node-strummer-middleware)
 
-[![Build Status](https://travis-ci.com/TabDigital/node-strummer-middleware.svg?token=RfpP7WAYQqnR4gnFRm4r&branch=master)](https://travis-ci.com/TabDigital/node-strummer-middleware)
+[![Build Status](https://travis-ci.com/TabDigital/node-strummer-middleware.svg?token=RfpP7WAYQqnR4gnFRm4r&branch=master)](https://travis-ci.com/TabDigital/node-strummer-middleware) [![Greenkeeper badge](https://badges.greenkeeper.io/Tabcorp/strummer-middleware.svg)](https://greenkeeper.io/)
 
 ## Description
 
