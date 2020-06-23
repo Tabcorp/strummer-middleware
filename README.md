@@ -1,13 +1,13 @@
 # strummer-middleware
 
 [![NPM](http://img.shields.io/npm/v/strummer-middleware.svg?style=flat-square)](https://npmjs.org/package/strummer-middleware)
-[![License](http://img.shields.io/npm/l/strummer-middleware.svg?style=flat-square)](https://github.com/TabDigital/node-strummer-middleware)
+[![License](http://img.shields.io/npm/l/strummer-middleware.svg?style=flat-square)](https://github.com/Tabcorp/node-strummer-middleware)
 
-[![Build Status](https://travis-ci.org/Tabcorp/strummer-middleware.svg?branch=master)](https://travis-ci.com/Tabcorp/strummer-middleware) [![Greenkeeper badge](https://badges.greenkeeper.io/Tabcorp/strummer-middleware.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.com/Tabcorp/node-strummer-middleware.svg?token=RfpP7WAYQqnR4gnFRm4r&branch=master)](https://travis-ci.com/Tabcorp/node-strummer-middleware)
 
 ## Description
 
-Wraps your [strummer](https://github.com/TabDigital/strummer) validation logic into middleware ready for a HTTP request!
+Wraps your [strummer](https://github.com/Tabcorp/strummer) validation logic into middleware ready for a HTTP request!
 
 ## Usage
 
@@ -76,7 +76,7 @@ console.log(err.details)
 
 ## Strummer integration
 
-Note that [strummer](https://github.com/TabDigital/strummer) is not included in `package.json` as a dependency, peerDependency or devDependency. This is to ensure we stay compatible with most versions of Node.
+Note that [strummer](https://github.com/Tabcorp/strummer) is not included in `package.json` as a dependency, peerDependency or devDependency. This is to ensure we stay compatible with most versions of Node.
 
 It also makes it very obvious which version of `strummer` you are using. For example, if `strummer-middleware` bundled its own version the following code would be quite confusing:
 
